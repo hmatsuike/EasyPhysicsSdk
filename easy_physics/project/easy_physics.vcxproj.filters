@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="easy_physics">
+      <UniqueIdentifier>{afd63067-4aa7-40d5-ac5e-518d1a5fd360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="easy_physics\collision">
+      <UniqueIdentifier>{cb20652c-285f-4fdf-976f-6ad3b68a560d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="easy_physics\elements">
+      <UniqueIdentifier>{6d03e28e-83b1-40fd-b84c-6327341a8f80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="easy_physics\pipeline">
+      <UniqueIdentifier>{dfd7e9a6-16b3-4878-a014-986389a1ae30}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\EpxBase.h">
+      <Filter>easy_physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EpxInclude.h">
+      <Filter>easy_physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EpxMass.h">
+      <Filter>easy_physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\collision\EpxClosestFunction.h">
+      <Filter>easy_physics\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\collision\EpxConvexConvexContact.h">
+      <Filter>easy_physics\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\collision\EpxVectorFunction.h">
+      <Filter>easy_physics\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxCollidable.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxConstraint.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxContact.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxConvexMesh.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxPair.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxRigidBody.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxShape.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxSolverBody.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxState.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxAllocator.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxBroadphase.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxCollisionDetection.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxConstraintSolver.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxIntegrate.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeline\EpxSort.h">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxSphere.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxSolverFunction.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxJoint.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\elements\EpxCoreSphere.h">
+      <Filter>easy_physics\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\collision\EpxConvexSphereClosest.h">
+      <Filter>easy_physics\collision</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\collision\EpxClosestFunction.cpp">
+      <Filter>easy_physics\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\collision\EpxConvexConvexContact.cpp">
+      <Filter>easy_physics\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\elements\EpxContact.cpp">
+      <Filter>easy_physics\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\elements\EpxConvexMesh.cpp">
+      <Filter>easy_physics\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pipeline\EpxBroadphase.cpp">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pipeline\EpxCollisionDetection.cpp">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pipeline\EpxConstraintSolver.cpp">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pipeline\EpxIntegrate.cpp">
+      <Filter>easy_physics\pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\elements\EpxSolverFunction.cpp">
+      <Filter>easy_physics\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\elements\EpxJoint.cpp">
+      <Filter>easy_physics\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\collision\EpxConvexSphereClosest.cpp">
+      <Filter>easy_physics\collision</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
