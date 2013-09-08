@@ -57,6 +57,7 @@ static void render(void)
 	renderDebugBegin();
 
 	// 衝突点の表示
+#if 0
 	const EpxVector3 colorA(1,0,0);
 	const EpxVector3 colorB(0,0,1);
 	const EpxVector3 colorLine(0,1,1);
@@ -85,6 +86,7 @@ static void render(void)
 			renderDebugLine(pointA,pointB,colorLine);
 		}
 	}
+#endif
 
 	renderDebugEnd();
 

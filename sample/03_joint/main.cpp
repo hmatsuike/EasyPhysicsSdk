@@ -59,6 +59,7 @@ static void render(void)
 	renderDebugBegin();
 
 	// 衝突点の表示
+#if 0
 	const EpxVector3 colorA(1,0,0);
 	const EpxVector3 colorB(0,0,1);
 	const EpxVector3 colorLine(0,1,1);
@@ -127,7 +128,7 @@ static void render(void)
 			renderDebugSphere(worldTransform.getTranslation(),collidable.m_coreSpheres[j].m_radius,EpxVector3(0,1,0));
 		}
 	}
-
+#endif
 	
 	renderDebugEnd();
 
