@@ -243,7 +243,7 @@ void createSceneVarietyOfJoints()
 		states[id].m_position = EpxVector3(-4.0f,3.0f,0.5f+scale[2]);
 		bodies[id].reset();
 		bodies[id].m_mass = 5.0f;
-		bodies[id].m_inertia = epxCalcInertiaBox(scale,5.0f);
+		bodies[id].m_inertia = epxCalcInertiaBox(5.0f*scale,5.0f);
 		collidables[id].reset();
 		collidables[id].addShape(shape);
 		collidables[id].finish();
@@ -262,7 +262,7 @@ void createSceneVarietyOfJoints()
 		states[id].m_position = EpxVector3(-2.0f,3.0f,0.5f+scale[2]);
 		bodies[id].reset();
 		bodies[id].m_mass = 5.0f;
-		bodies[id].m_inertia = epxCalcInertiaBox(scale,5.0f);
+		bodies[id].m_inertia = epxCalcInertiaBox(5.0f*scale,5.0f);
 		collidables[id].reset();
 		collidables[id].addShape(shape);
 		collidables[id].finish();
@@ -282,7 +282,7 @@ void createSceneVarietyOfJoints()
 		states[id].m_position = EpxVector3(-0.0f,3.0f,0.5f+scale[2]);
 		bodies[id].reset();
 		bodies[id].m_mass = 5.0f;
-		bodies[id].m_inertia = epxCalcInertiaBox(scale,5.0f);
+		bodies[id].m_inertia = epxCalcInertiaBox(5.0f*scale,5.0f);
 		collidables[id].reset();
 		collidables[id].addShape(shape);
 		collidables[id].finish();
@@ -301,7 +301,7 @@ void createSceneVarietyOfJoints()
 		states[id].m_position = EpxVector3(2.0f,3.0f,0.5f+scale[2]);
 		bodies[id].reset();
 		bodies[id].m_mass = 5.0f;
-		bodies[id].m_inertia = epxCalcInertiaBox(scale,5.0f);
+		bodies[id].m_inertia = epxCalcInertiaBox(5.0f*scale,5.0f);
 		collidables[id].reset();
 		collidables[id].addShape(shape);
 		collidables[id].finish();
@@ -321,7 +321,7 @@ void createSceneVarietyOfJoints()
 		states[id].m_position = EpxVector3(4.0f,3.0f,0.5f+scale[2]);
 		bodies[id].reset();
 		bodies[id].m_mass = 5.0f;
-		bodies[id].m_inertia = epxCalcInertiaBox(scale,5.0f);
+		bodies[id].m_inertia = epxCalcInertiaBox(5.0f*scale,5.0f);
 		collidables[id].reset();
 		collidables[id].addShape(shape);
 		collidables[id].finish();
@@ -713,7 +713,7 @@ void createSceneChain()
 		int id = numRigidBodies++;
 
 		states[id].reset();
-		states[id].m_position = EpxVector3(-2.5f,5.0f,0.0f) + EpxVector3(0.0f,-i*chainScale[1]*2.0f,0.0f);
+		states[id].m_position = EpxVector3(-5.0f,5.0f,0.0f) + EpxVector3(0.0f,-i*chainScale[1]*2.0f,0.0f);
 		bodies[id].reset();
 		bodies[id].m_mass = 1.0f;
 		bodies[id].m_inertia = epxCalcInertiaBox(chainScale,1.0f);
@@ -778,10 +778,75 @@ void createSceneChain()
 		int id = numRigidBodies++;
 
 		states[id].reset();
-		states[id].m_position = EpxVector3(2.5f,5.0f,0.0f) + EpxVector3(0.0f,-i*chainScale[1]*2.0f,0.0f);
+		states[id].m_position = EpxVector3(0.0f,5.0f,0.0f) + EpxVector3(0.0f,-i*chainScale[1]*2.0f,0.0f);
 		bodies[id].reset();
 		bodies[id].m_mass = 1.0f;
 		bodies[id].m_inertia = epxCalcInertiaBox(15.0f * chainScale,1.0f); // 慣性テンソル増加
+		collidables[id].reset();
+	
+		EpxShape shape;
+		shape.reset();
+	
+		epxCreateConvexMesh(&shape.m_geometry,box_vertices,box_numVertices,box_indices,box_numIndices,chainScale);
+		shape.userData = (void*)createRenderMesh(&shape.m_geometry);
+	
+		collidables[id].addShape(shape);
+		collidables[id].finish();
+		
+		EpxJoint &joint = joints[numJoints++];
+		joint.reset();
+		if(i>0) {
+			epxInitializeJointAsBall(joint,
+				id-1,id,
+				states[id-1],states[id],
+				states[id-1].m_position + EpxVector3(0.0f,-chainScale[1],0.0f), // 接続位置
+				0.1f,0.0f);
+		}
+		else {
+			epxInitializeJointAsBall(joint,
+				dummyId,id,
+				states[dummyId],states[id],
+				states[id].m_position + EpxVector3(0.0f,chainScale[1],0.0f), // 接続位置
+				0.1f,0.0f);
+		}
+	}
+
+	{
+		int id = numRigidBodies++;
+		
+		states[id].reset();
+		states[id].m_position = states[id-1].m_position + EpxVector3(0.0f,-chainScale[1]-ballScale[1],0.0f);
+		bodies[id].reset();
+		bodies[id].m_mass = 50.0f;
+		bodies[id].m_inertia = epxCalcInertiaSphere(ballScale[1],50.0f);
+		collidables[id].reset();
+		
+		EpxShape shape;
+		shape.reset();
+		
+		epxCreateConvexMesh(&shape.m_geometry,sphere_vertices,sphere_numVertices,sphere_indices,sphere_numIndices,ballScale);
+		shape.userData = (void*)createRenderMesh(&shape.m_geometry);
+		
+		collidables[id].addShape(shape);
+		collidables[id].finish();
+
+		EpxJoint &joint = joints[numJoints++];
+		epxInitializeJointAsBall(joint,
+			id-1,id,
+			states[id-1],states[id],
+			states[id-1].m_position + EpxVector3(0.0f,-chainScale[1],0.0f), // 接続位置
+			0.1f,0.0f);
+	}
+
+	// 接続位置から重量を軽くしていく
+	for(int i=0;i<5;i++) {
+		int id = numRigidBodies++;
+		float ratio = 1.0f - ((float)i/5.0f);
+		states[id].reset();
+		states[id].m_position = EpxVector3(5.0f,5.0f,0.0f) + EpxVector3(0.0f,-i*chainScale[1]*2.0f,0.0f);
+		bodies[id].reset();
+		bodies[id].m_mass = ratio * 10.0f;
+		bodies[id].m_inertia = epxCalcInertiaBox(ratio * 30.0f * chainScale,1.0f); // 慣性テンソル増加
 		collidables[id].reset();
 	
 		EpxShape shape;
