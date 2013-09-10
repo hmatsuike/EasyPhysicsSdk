@@ -665,6 +665,9 @@ EpxUInt32 physicsGetRigidBodyBInContact(int i)
 
 void physicsFire(const EasyPhysics::EpxVector3 &position,const EasyPhysics::EpxVector3 &velocity)
 {
+	//epxPrintf("fire pos %f %f %f vel %f %f %f\n",
+	//	(float)position[0],(float)position[1],(float)position[2],
+	//	(float)velocity[0],(float)velocity[1],(float)velocity[2]);
 	states[fireRigidBodyId].m_motionType = EpxMotionTypeActive;
 	states[fireRigidBodyId].m_position = position;
 	states[fireRigidBodyId].m_linearVelocity = velocity;

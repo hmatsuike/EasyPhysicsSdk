@@ -56,5 +56,8 @@
     <ClInclude Include="..\common\font_render_func.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\default_allocator.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -30,12 +30,12 @@ class DefaultAllocator : public EasyPhysics::EpxAllocator
 public:
 	void *allocate(size_t bytes)
 	{
-		return malloc(bytes);
+		return _aligned_malloc(bytes,16);
 	}
 	
 	void deallocate(void *p)
 	{
-		free(p);
+		_aligned_free(p);
 	}
 };
 
@@ -56,14 +56,14 @@ private:
 public:
 	StackAllocator()
 	{
-		void *p = malloc(HEAP_BYTES);
+		void *p = _aligned_malloc(HEAP_BYTES,16);
 		EPX_ALWAYS_ASSERT(p);
 		initialize(p,HEAP_BYTES);
 	}
 	
 	~StackAllocator()
 	{
-		free(m_heapBuff);
+		_aligned_free(m_heapBuff);
 	}
 	
 	void initialize(void *heapBuff,size_t heapBytes)
