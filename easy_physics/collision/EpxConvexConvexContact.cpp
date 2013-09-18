@@ -33,29 +33,6 @@ enum EpxSatType {
 	EpxSatTypeEdgeEdge,
 };
 
-/*
-#define EPX_CHECK_MINMAX(axis,AMin,AMax,BMin,BMax,type) \
-{\
-	satCount++;\
-	EpxFloat d1 = AMin - BMax;\
-	EpxFloat d2 = BMin - AMax;\
-	if(d1 >= 0.0f || d2 >= 0.0f) {\
-		return false;\
-	}\
-	if(distanceMin < d1) {\
-		distanceMin = d1;\
-		axisMin = axis;\
-		satType = type;\
-		axisFlip = false;\
-	}\
-	if(distanceMin < d2) {\
-		distanceMin = d2;\
-		axisMin = -axis;\
-		satType = type;\
-		axisFlip = true;\
-	}\
-}
-*/
 EpxBool isValidEdge(const EpxVector3 &eA0,const EpxVector3 &eA1,const EpxVector3 &eB0,const EpxVector3 &eB1)
 {
 	EpxVector3 eAX = cross(eA1,eA0);
@@ -99,13 +76,64 @@ EpxBool epxConvexConvexContact_local(
 	// 分離軸判定
 	
 	int satCount = 0;
+	
+	// 面法線の判定を優先させたいので、エッジ外積→面法線の順に判定
+	
+	// ConvexAとConvexBの外積を分離軸とする
+	EpxUInt32 edgeIdMinA,edgeIdMinB;
+	
+	for(EpxUInt32 eA=0;eA<convexA.m_numEdges;eA++) {
+		const EpxEdge &edgeA = convexA.m_edges[eA];
+		if(edgeA.type != EpxEdgeTypeConvex) continue;
 
+		const EpxVector3 edgeVecA = convexA.m_vertices[edgeA.vertId[1]] - convexA.m_vertices[edgeA.vertId[0]];
+		
+		for(EpxUInt32 eB=0;eB<convexB.m_numEdges;eB++) {
+			const EpxEdge &edgeB = convexB.m_edges[eB];
+			if(edgeB.type != EpxEdgeTypeConvex) continue;
+				
+			const EpxVector3 edgeVecB = matrixAB * (convexB.m_vertices[edgeB.vertId[1]] - convexB.m_vertices[edgeB.vertId[0]]);
+
+			// Gauss map algorithm from GDC 2013 physics tutorial
+			EpxVector3 eA0 = convexA.m_facets[edgeA.facetId[0]].normal;
+			EpxVector3 eA1 = convexA.m_facets[edgeA.facetId[1]].normal;
+			EpxVector3 eB0 = -matrixAB * convexB.m_facets[edgeB.facetId[0]].normal;
+			EpxVector3 eB1 = -matrixAB * convexB.m_facets[edgeB.facetId[1]].normal;
+			if(!isValidEdge(eA0,eA1,eB0,eB1)) continue;
+			
+			EpxVector3 separatingAxis = cross(edgeVecA,edgeVecB);
+			if(lengthSqr(separatingAxis) < EPX_EPSILON*EPX_EPSILON) continue;
+			
+			separatingAxis = normalize(separatingAxis);
+
+			EpxVector3 pA = convexA.m_vertices[edgeA.vertId[0]];
+			EpxVector3 pB = offsetAB + matrixAB * convexB.m_vertices[edgeB.vertId[0]];
+
+			if(dot(separatingAxis,pA) > 0.0f) { // 原点は必ずConvexの内側に存在すること
+				separatingAxis = -separatingAxis;
+			}
+			
+			EpxFloat d = dot(separatingAxis,pA - pB);
+			
+			satCount++;
+			if(d >= 0.0f) {
+				return false;
+			}
+			if(distanceMin < d) {
+				distanceMin = d;
+				axisMin = separatingAxis;
+				satType = EpxSatTypeEdgeEdge;
+				edgeIdMinA = eA;
+				edgeIdMinB = eB;
+			}
+		}
+	}
+	
 	// ConvexAの面法線を分離軸とする
 	for(EpxUInt32 f=0;f<convexA.m_numFacets;f++) {
 		const EpxFacet &facet = convexA.m_facets[f];
 		const EpxVector3 separatingAxis = facet.normal;
 		
-#if 1
 		EpxVector3 axisB = matrixBA * separatingAxis;
 		EpxVector3 pA = offsetBA + matrixBA * convexA.m_vertices[facet.vertId[0]];
 		EpxFloat minB = EPX_FLT_MAX;
@@ -124,21 +152,6 @@ EpxBool epxConvexConvexContact_local(
 			satType = EpxSatTypePointBFacetA;
 			axisFlip = true;
 		}
-#else
-		// ConvexAを分離軸に投影
-		EpxFloat minA,maxA;
-		epxGetProjection(minA,maxA,&convexA,separatingAxis);
-		
-		// ConvexBを分離軸に投影
-		EpxFloat minB,maxB;
-		epxGetProjection(minB,maxB,&convexB,matrixBA * facet.normal);
-		EpxFloat offset = dot(offsetAB,separatingAxis);
-		minB += offset;
-		maxB += offset;
-		
-		// 判定
-		EPX_CHECK_MINMAX(separatingAxis,minA,maxA,minB,maxB,EpxSatTypePointBFacetA);
-#endif
 	}
 		
 	// ConvexBの面法線を分離軸とする
@@ -146,7 +159,6 @@ EpxBool epxConvexConvexContact_local(
 		const EpxFacet &facet = convexB.m_facets[f];
 		const EpxVector3 separatingAxis = matrixAB * facet.normal;
 		
-#if 1
 		EpxVector3 pB = offsetAB + matrixAB * convexB.m_vertices[facet.vertId[0]];
 		EpxFloat minA = EPX_FLT_MAX;
 		for(EpxUInt32 i=0;i<convexA.m_numVertices;i++) {
@@ -163,90 +175,6 @@ EpxBool epxConvexConvexContact_local(
 			axisMin = separatingAxis;
 			satType = EpxSatTypePointAFacetB;
 			axisFlip = false;
-		}
-#else
-		// ConvexAを分離軸に投影
-		EpxFloat minA,maxA;
-		epxGetProjection(minA,maxA,&convexA,separatingAxis);
-		
-		// ConvexBを分離軸に投影
-		EpxFloat minB,maxB;
-		epxGetProjection(minB,maxB,&convexB,facet.normal);
-		EpxFloat offset = dot(offsetAB,separatingAxis);
-		minB += offset;
-		maxB += offset;
-		
-		// 判定
-		EPX_CHECK_MINMAX(separatingAxis,minA,maxA,minB,maxB,EpxSatTypePointAFacetB);
-#endif
-	}
-		
-	// ConvexAとConvexBの外積を分離軸とする
-	for(EpxUInt32 eA=0;eA<convexA.m_numEdges;eA++) {
-		const EpxEdge &edgeA = convexA.m_edges[eA];
-		if(edgeA.type != EpxEdgeTypeConvex) continue;
-
-		const EpxVector3 edgeVecA = convexA.m_vertices[edgeA.vertId[1]] - convexA.m_vertices[edgeA.vertId[0]];
-		
-		for(EpxUInt32 eB=0;eB<convexB.m_numEdges;eB++) {
-			const EpxEdge &edgeB = convexB.m_edges[eB];
-			if(edgeB.type != EpxEdgeTypeConvex) continue;
-				
-			const EpxVector3 edgeVecB = matrixAB * (convexB.m_vertices[edgeB.vertId[1]] - convexB.m_vertices[edgeB.vertId[0]]);
-
-			// Gauss map algorithm from physics tutorial at GDC 2013
-			EpxVector3 eA0 = convexA.m_facets[edgeA.facetId[0]].normal;
-			EpxVector3 eA1 = convexA.m_facets[edgeA.facetId[1]].normal;
-			EpxVector3 eB0 = -matrixAB * convexB.m_facets[edgeB.facetId[0]].normal;
-			EpxVector3 eB1 = -matrixAB * convexB.m_facets[edgeB.facetId[1]].normal;
-			if(!isValidEdge(eA0,eA1,eB0,eB1)) continue;
-			
-			EpxVector3 separatingAxis = cross(edgeVecA,edgeVecB);
-			if(lengthSqr(separatingAxis) < EPX_EPSILON*EPX_EPSILON) continue;
-			
-			separatingAxis = normalize(separatingAxis);
-		
-#if 1
-			EpxVector3 pA = convexA.m_vertices[edgeA.vertId[0]];
-			EpxVector3 pB = offsetAB + matrixAB * convexB.m_vertices[edgeB.vertId[0]];
-
-			if(dot(separatingAxis,pA) > 0.0f) { // 原点は必ずConvexの内側に存在すること
-				separatingAxis = -separatingAxis;
-			}
-			
-			EpxFloat d = dot(separatingAxis,pA - pB);
-			
-			satCount++;
-			if(d >= 0.0f) {
-				return false;
-			}
-			if(distanceMin < d) {
-				distanceMin = d;
-				axisMin = separatingAxis;
-				satType = EpxSatTypeEdgeEdge;
-			}
-#else			
-			EpxVector3 pA = convexA.m_vertices[edgeA.vertId[0]];
-			EpxVector3 pB = offsetAB + matrixAB * convexB.m_vertices[edgeB.vertId[1]];
-			
-			EpxFloat chk1 = dot(separatingAxis,pA);
-			EpxFloat dd1 = dot(separatingAxis,pA - pB);
-			EpxFloat dd2 = dot(separatingAxis,pB - pA);
-
-			// ConvexAを分離軸に投影
-			EpxFloat minA,maxA;
-			epxGetProjection(minA,maxA,&convexA,separatingAxis);
-				
-			// ConvexBを分離軸に投影
-			EpxFloat minB,maxB;
-			epxGetProjection(minB,maxB,&convexB,matrixBA * separatingAxis);
-			EpxFloat offset = dot(offsetAB,separatingAxis);
-			minB += offset;
-			maxB += offset;
-			
-			// 判定
-			EPX_CHECK_MINMAX(separatingAxis,minA,maxA,minB,maxB,EpxSatTypeEdgeEdge);
-#endif
 		}
 	}
 	
@@ -266,76 +194,123 @@ EpxBool epxConvexConvexContact_local(
 	EpxVector3 closestPointA,closestPointB;
 	EpxVector3 separation = 1.1f * fabs(distanceMin) * axisMin;
 
-	for(EpxUInt32 fA=0;fA<convexA.m_numFacets;fA++) {
-		const EpxFacet &facetA = convexA.m_facets[fA];
+	if(satType == EpxSatTypeEdgeEdge) {
+		const EpxEdge &edgeA = convexA.m_edges[edgeIdMinA];
+		const EpxEdge &edgeB = convexB.m_edges[edgeIdMinB];
+		
+		EpxVector3 sA,sB;
+		
+		epxGetClosestTwoSegments(
+			separation + convexA.m_vertices[edgeA.vertId[0]],
+			separation + convexA.m_vertices[edgeA.vertId[1]],
+			offsetAB + matrixAB * convexB.m_vertices[edgeB.vertId[0]],
+			offsetAB + matrixAB * convexB.m_vertices[edgeB.vertId[1]],
+			sA,sB);
+		
+		EpxFloat dSqr = lengthSqr(sA-sB);
+		closestMinSqr = dSqr;
+		closestPointA = sA;
+		closestPointB = sB;
 
-		EpxFloat checkA = dot(facetA.normal,-axisMin);
-		if(satType == EpxSatTypePointBFacetA && checkA < 0.99f && axisFlip) {
-			// 判定軸が面Aの法線のとき、向きの違うAの面は判定しない
-			continue;
-		}
-			
-		if(checkA < 0.0f) {
-			// 衝突面と逆に向いている面は判定しない
-			continue;
-		}
-			
-		for(EpxUInt32 fB=0;fB<convexB.m_numFacets;fB++) {
-			const EpxFacet &facetB = convexB.m_facets[fB];
+		collCount++;
+	}
+	else {
+		// 分離平面を挟んで向かい合う面を抽出
+		EpxUInt8 facetsA[EPX_CONVEX_MESH_MAX_FACETS];
+		EpxUInt8 facetsB[EPX_CONVEX_MESH_MAX_FACETS];
+		EpxUInt8 numFacetsA = 0;
+		EpxUInt8 numFacetsB = 0;
+		
+		if(satType == EpxSatTypePointBFacetA) {
+			for(EpxUInt8 fA=0;fA<convexA.m_numFacets;fA++) {
+				const EpxFacet &facetA = convexA.m_facets[fA];
 
-			EpxFloat checkB = dot(facetB.normal,matrixBA * axisMin);
-			if(satType == EpxSatTypePointAFacetB && checkB < 0.99f && !axisFlip) {
-				// 判定軸が面Bの法線のとき、向きの違うBの面は判定しない
-				continue;
-			}
-			
-			if(checkB < 0.0f) {
-				// 衝突面と逆に向いている面は判定しない
-				continue;
-			}
-
-			collCount++;
-
-			// 面Ａと面Ｂの最近接点を求める
-			EpxVector3 triangleA[3] = {
-				separation + convexA.m_vertices[facetA.vertId[0]],
-				separation + convexA.m_vertices[facetA.vertId[1]],
-				separation + convexA.m_vertices[facetA.vertId[2]],
-			};
-			
-			EpxVector3 triangleB[3] = {
-				offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[0]],
-				offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[1]],
-				offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[2]],
-			};
-			
-			// エッジ同士の最近接点算出
-			switch(satType) {
-				case EpxSatTypeEdgeEdge:
-				for(int i=0;i<3;i++) {
-					if(convexA.m_edges[facetA.edgeId[i]].type != EpxEdgeTypeConvex) continue;
-				
-					for(int j=0;j<3;j++) {
-						if(convexB.m_edges[facetB.edgeId[j]].type != EpxEdgeTypeConvex) continue;
-
-						EpxVector3 sA,sB;
-						epxGetClosestTwoSegments(
-							triangleA[i],triangleA[(i+1)%3],
-							triangleB[j],triangleB[(j+1)%3],
-							sA,sB);
-						
-						EpxFloat dSqr = lengthSqr(sA-sB);
-						if(dSqr < closestMinSqr) {
-							closestMinSqr = dSqr;
-							closestPointA = sA;
-							closestPointB = sB;
-						}
-					}
+				EpxFloat checkA = dot(facetA.normal,-axisMin);
+				if(checkA < 0.99f && axisFlip) {
+					// 判定軸が面Aの法線のとき、向きの違うAの面は判定しない
+					continue;
 				}
-				break;
+					
+				if(checkA < 0.0f) {
+					// 衝突面と逆に向いている面は判定しない
+					continue;
+				}
 				
-				case EpxSatTypePointAFacetB:
-				case EpxSatTypePointBFacetA:
+				facetsA[numFacetsA++] = (EpxUInt8)fA;
+			}
+			
+			EpxFloat checkBMax = -1.0f;
+			for(EpxUInt8 fB=0;fB<convexB.m_numFacets;fB++) {
+				const EpxFacet &facetB = convexB.m_facets[fB];
+				
+				EpxFloat checkB = dot(facetB.normal,matrixBA * axisMin);
+				
+				if(checkB > checkBMax) {
+					checkBMax = checkB;
+					facetsB[0] = fB;
+					numFacetsB = 1;
+				}
+				else if(checkB > checkBMax - EPX_EPSILON) { // checkB == checkBMax
+					facetsB[numFacetsB++] = fB;
+				}
+			}
+		}
+		else { // satType == EpxSatTypePointAFacetB
+			for(EpxUInt8 fB=0;fB<convexB.m_numFacets;fB++) {
+				const EpxFacet &facetB = convexB.m_facets[fB];
+
+				EpxFloat checkB = dot(facetB.normal,matrixBA * axisMin);
+				if(checkB < 0.99f && !axisFlip) {
+					// 判定軸が面Bの法線のとき、向きの違うBの面は判定しない
+					continue;
+				}
+				
+				if(checkB < 0.0f) {
+					// 衝突面と逆に向いている面は判定しない
+					continue;
+				}
+				
+				facetsB[numFacetsB++] = (EpxUInt8)fB;
+			}
+
+			EpxFloat checkAMax = -1.0f;
+			for(EpxUInt8 fA=0;fA<convexA.m_numFacets;fA++) {
+				const EpxFacet &facetA = convexA.m_facets[fA];
+				
+				EpxFloat checkA = dot(facetA.normal,-axisMin);
+				
+				if(checkA > checkAMax) {
+					checkAMax = checkA;
+					facetsA[0] = fA;
+					numFacetsA = 1;
+				}
+				else if(checkA > checkAMax - EPX_EPSILON) { // checkA == checkAMax
+					facetsA[numFacetsA++] = fA;
+				}
+			}
+		}
+		
+		for(EpxUInt8 fA=0;fA<numFacetsA;fA++) {
+			const EpxFacet &facetA = convexA.m_facets[facetsA[fA]];
+			
+			for(EpxUInt8 fB=0;fB<numFacetsB;fB++) {
+				const EpxFacet &facetB = convexB.m_facets[facetsB[fB]];
+				
+				collCount++;
+				
+				// 面Ａと面Ｂの最近接点を求める
+				EpxVector3 triangleA[3] = {
+					separation + convexA.m_vertices[facetA.vertId[0]],
+					separation + convexA.m_vertices[facetA.vertId[1]],
+					separation + convexA.m_vertices[facetA.vertId[2]],
+				};
+				
+				EpxVector3 triangleB[3] = {
+					offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[0]],
+					offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[1]],
+					offsetAB + matrixAB * convexB.m_vertices[facetB.vertId[2]],
+				};
+				
 				// 頂点Ａ→面Ｂの最近接点算出
 				for(int i=0;i<3;i++) {
 					EpxVector3 s;
@@ -347,6 +322,7 @@ EpxBool epxConvexConvexContact_local(
 						closestPointB = s;
 					}
 				}
+				
 				// 頂点Ｂ→面Ａの最近接点算出
 				for(int i=0;i<3;i++) {
 					EpxVector3 s;
@@ -358,13 +334,12 @@ EpxBool epxConvexConvexContact_local(
 						closestPointB = triangleB[i];
 					}
 				}
-				break;
 			}
 		}
 	}
-
+	
 	//epxPrintf("intersection check count %d\n",collCount);
-
+	
 	normal = transformA.getUpper3x3() * axisMin;
 	penetrationDepth = distanceMin;
 	contactPointA = closestPointA - separation;
@@ -384,7 +359,6 @@ EpxBool epxConvexConvexContact(
 	EpxVector3 &contactPointB)
 {
 	// 座標系変換の回数を減らすため、面数の多い方を座標系の基準とする
-
 	EpxBool ret;
 	if(convexA.m_numFacets >= convexB.m_numFacets) {
 		ret = epxConvexConvexContact_local(
