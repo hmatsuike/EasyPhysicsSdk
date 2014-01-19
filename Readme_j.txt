@@ -1,72 +1,72 @@
-///////////////////////////////////////////////////////////////////////////////
-// Easy Physics SDK ƒpƒbƒP[ƒW Version 0.8
+ï»¿///////////////////////////////////////////////////////////////////////////////
+// Easy Physics SDK ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ Version 0.8
 
 ===============================================================================
-== ŠT—v
+== æ¦‚è¦
 
-Easy Physics SDK‚ÍƒŠƒAƒ‹ƒ^ƒCƒ€3D„‘ÌƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“‚ðŽÀŒ»‚·‚é‚½‚ß‚Ìƒ‰ƒCƒuƒ‰ƒŠ‚Å
-‚·B„‘Ì‚ðˆµ‚¤‚½‚ß‚ÌŠî–{“I‚Èˆ—‚É‰Á‚¦A—lX‚ÈƒWƒ‡ƒCƒ“ƒg‚âA˜A‘±“I‚É•¨—‚ðˆµ‚¤‚½
-‚ß‚ÌŽd‘g‚Ý‚ð’ñ‹Ÿ‚µ‚Ü‚·B
+Easy Physics SDKã¯ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ 3Då‰›ä½“ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å®Ÿç¾ã™ã‚‹ãŸã‚ã®ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§
+ã™ã€‚å‰›ä½“ã‚’æ‰±ã†ãŸã‚ã®åŸºæœ¬çš„ãªå‡¦ç†ã«åŠ ãˆã€æ§˜ã€…ãªã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã‚„ã€é€£ç¶šçš„ã«ç‰©ç†ã‚’æ‰±ã†ãŸ
+ã‚ã®ä»•çµ„ã¿ã‚’æä¾›ã—ã¾ã™ã€‚
 
-ƒCƒ“ƒvƒŒƒXƒWƒƒƒpƒ“ŽÐ‚æ‚èo”Å‚³‚ê‚Ä‚¢‚éuƒQ[ƒ€§ìŽÒ‚Ì‚½‚ß‚Ì•¨—ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“
-@„‘Ì•Òv‚ÉAuEasy Physicsv‚ÌŠî–{“I‚ÈƒAƒ‹ƒSƒŠƒYƒ€‚ÌÚ×‚âˆµ‚¢•û‚ª‰ðà‚³‚ê‚Ä‚¢
-‚Ü‚·B–{ƒ‰ƒCƒuƒ‰ƒŠ‚ÍAuEasy Physicsv‚É‚¢‚­‚Â‚©‚Ì‰üC‚ðŽ{‚µ‚½ƒo[ƒWƒ‡ƒ“‚Æ‚È‚Á‚Ä
-‚¢‚Ü‚·B
+ã‚¤ãƒ³ãƒ—ãƒ¬ã‚¹ã‚¸ãƒ£ãƒ‘ãƒ³ç¤¾ã‚ˆã‚Šå‡ºç‰ˆã•ã‚Œã¦ã„ã‚‹ã€Œã‚²ãƒ¼ãƒ åˆ¶ä½œè€…ã®ãŸã‚ã®ç‰©ç†ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³
+ã€€å‰›ä½“ç·¨ã€ã«ã€ã€ŒEasy Physicsã€ã®åŸºæœ¬çš„ãªã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã®è©³ç´°ã‚„æ‰±ã„æ–¹ãŒè§£èª¬ã•ã‚Œã¦ã„
+ã¾ã™ã€‚æœ¬ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¯ã€ã€ŒEasy Physicsã€ã«ã„ãã¤ã‹ã®æ”¹ä¿®ã‚’æ–½ã—ãŸãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¨ãªã£ã¦
+ã„ã¾ã™ã€‚
 
-¡Žå‚È‰üC“_
-@- Speculative Contacts‚É‚æ‚éƒRƒŠƒWƒ‡ƒ“”²‚¯‚ð–h‚®Žd‘g‚Ý‚Ì“±“ü
-@- —lX‚ÈƒWƒ‡ƒCƒ“ƒg‚ð6DOFƒWƒ‡ƒCƒ“ƒg‚Å•\Œ»
-@- 1Ž²Sort and sweep‚Åƒuƒ[ƒhƒtƒF[ƒY‚ð‚‘¬‰»
-@- “ÊƒƒbƒVƒ…“¯Žm‚ÌÕ“ËŒŸo‚ð‚‘¬‰»
-
-===============================================================================
-== ‹@”\
-
-„‘Ì‚Í‘S‚Ä“ÊƒƒbƒVƒ…iConvex Hullj‚Æ‚µ‚Äˆµ‚¢‚Ü‚·B
-Še„‘Ì‚ÍÅ‘å‚T‚Â‚Ü‚Å‚Ì“ÊƒƒbƒVƒ…‚ð•ÛŽ‚µ‚Ü‚·B
-ƒWƒ‡ƒCƒ“ƒg‚ÍˆÈ‰º‚Ì6Ží‚ðƒTƒ|[ƒg‚µ‚Ü‚·B
- - ƒ{[ƒ‹ƒWƒ‡ƒCƒ“ƒgAƒqƒ“ƒWƒWƒ‡ƒCƒ“ƒgAŒÅ’èƒWƒ‡ƒCƒ“ƒgAƒXƒCƒ“ƒOƒcƒCƒXƒgƒWƒ‡ƒCƒ“
-ƒgAƒXƒ‰ƒCƒ_ƒWƒ‡ƒCƒ“ƒg
+â– ä¸»ãªæ”¹ä¿®ç‚¹
+ã€€- Speculative Contactsã«ã‚ˆã‚‹ã‚³ãƒªã‚¸ãƒ§ãƒ³æŠœã‘ã‚’é˜²ãä»•çµ„ã¿ã®å°Žå…¥
+ã€€- æ§˜ã€…ãªã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã‚’6DOFã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã§è¡¨ç¾
+ã€€- 1è»¸Sort and sweepã§ãƒ–ãƒ­ãƒ¼ãƒ‰ãƒ•ã‚§ãƒ¼ã‚ºã‚’é«˜é€ŸåŒ–
+ã€€- å‡¸ãƒ¡ãƒƒã‚·ãƒ¥åŒå£«ã®è¡çªæ¤œå‡ºã‚’é«˜é€ŸåŒ–
 
 ===============================================================================
-== ƒZƒbƒgƒAƒbƒv
+== æ©Ÿèƒ½
 
-Eƒ‰ƒCƒuƒ‰ƒŠ—pVisual StudioƒvƒƒWƒFƒNƒgƒtƒ@ƒCƒ‹
+å‰›ä½“ã¯å…¨ã¦å‡¸ãƒ¡ãƒƒã‚·ãƒ¥ï¼ˆConvex Hullï¼‰ã¨ã—ã¦æ‰±ã„ã¾ã™ã€‚
+å„å‰›ä½“ã¯æœ€å¤§ï¼•ã¤ã¾ã§ã®å‡¸ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ä¿æŒã—ã¾ã™ã€‚
+ã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã¯ä»¥ä¸‹ã®6ç¨®ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¾ã™ã€‚
+ - ãƒœãƒ¼ãƒ«ã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã€ãƒ’ãƒ³ã‚¸ã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã€å›ºå®šã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã€ã‚¹ã‚¤ãƒ³ã‚°ãƒ„ã‚¤ã‚¹ãƒˆã‚¸ãƒ§ã‚¤ãƒ³
+ãƒˆã€ã‚¹ãƒ©ã‚¤ãƒ€ã‚¸ãƒ§ã‚¤ãƒ³ãƒˆ
+
+===============================================================================
+== ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+
+ãƒ»ãƒ©ã‚¤ãƒ–ãƒ©ãƒªç”¨Visual Studioãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«
 EasyPhysicsSdk/easy_physics/project/easy_physics.vcxproj
 
-EƒTƒ“ƒvƒ‹—pVisual Studioƒ\ƒŠƒ…[ƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹
+ãƒ»ã‚µãƒ³ãƒ—ãƒ«ç”¨Visual Studioã‚½ãƒªãƒ¥ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«
 EasyPhysicsSdk/sample/physics_sample_vs2010.sln
 
 ===============================================================================
-== ƒTƒ“ƒvƒ‹‚É‚Â‚¢‚Ä
+== ã‚µãƒ³ãƒ—ãƒ«ã«ã¤ã„ã¦
 
-‘S‚Ä‚ÌƒTƒ“ƒvƒ‹‚Íphysics_func.cpp‚ÌphysicsCreateScene()‚ÅƒV[ƒ“‚ðì¬A
-physicsSimulate()‚ÅƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“ƒXƒeƒbƒv‚ðŽÀs‚µ‚Ü‚·B
+å…¨ã¦ã®ã‚µãƒ³ãƒ—ãƒ«ã¯physics_func.cppã®physicsCreateScene()ã§ã‚·ãƒ¼ãƒ³ã‚’ä½œæˆã€
+physicsSimulate()ã§ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒƒãƒ—ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
 
-¡EasyPhysicsSdk/sample/01_basic
-Šî–{“I‚È„‘ÌƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“‚Ì‹@”\‚ðÐ‰î‚·‚éƒTƒ“ƒvƒ‹‚Å‚·B
+â– EasyPhysicsSdk/sample/01_basic
+åŸºæœ¬çš„ãªå‰›ä½“ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã®æ©Ÿèƒ½ã‚’ç´¹ä»‹ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«ã§ã™ã€‚
 
-¡EasyPhysicsSdk/sample/02_compound
-•¡‡Œ`ó‚âdS‚ð‚¸‚ç‚µ‚½„‘Ì‚È‚ÇA‰ž—p“I‚ÈŽg‚¢•û‚ðÐ‰î‚·‚éƒTƒ“ƒvƒ‹‚Å‚·B
+â– EasyPhysicsSdk/sample/02_compound
+è¤‡åˆå½¢çŠ¶ã‚„é‡å¿ƒã‚’ãšã‚‰ã—ãŸå‰›ä½“ãªã©ã€å¿œç”¨çš„ãªä½¿ã„æ–¹ã‚’ç´¹ä»‹ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«ã§ã™ã€‚
 
-¡EasyPhysicsSdk/sample/03_joint
-„‘Ì‚ðƒWƒ‡ƒCƒ“ƒg‚Å˜AŒ‹‚³‚¹A•¡ŽG‚È‹@\‚ðÄŒ»‚·‚éÐ‰î‚·‚éƒTƒ“ƒvƒ‹‚Å‚·B
-
-===============================================================================
-== ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ö‚Ì‘g‚Ýž‚Ý
-
-EEasy Physics SDK API‚ÌŽg—p
-ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒvƒƒWƒFƒNƒg‚ÉEasy Physics SDK‚ÌƒvƒƒWƒFƒNƒg‚ð’Ç‰Á‚µAƒR[ƒh‚É
-uEasyPhysicsSdk/easy_physics/EpxInclude.hv‚ðƒCƒ“ƒNƒ‹[ƒh‚µ‚Ä‚­‚¾‚³‚¢B‘¼‚ÌŠÖ˜A
-ƒwƒbƒ_‚ÍEpxInclude.h‚©‚ç‘Š‘Î“I‚ÉŽQÆ‚³‚ê‚Ü‚·B
+â– EasyPhysicsSdk/sample/03_joint
+å‰›ä½“ã‚’ã‚¸ãƒ§ã‚¤ãƒ³ãƒˆã§é€£çµã•ã›ã€è¤‡é›‘ãªæ©Ÿæ§‹ã‚’å†ç¾ã™ã‚‹ç´¹ä»‹ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«ã§ã™ã€‚
 
 ===============================================================================
-== ƒrƒ‹ƒhŠÂ‹«
+== ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã¸ã®çµ„ã¿è¾¼ã¿
 
-OS : Windows XPˆÈ~
-CPU : 1GHzˆÈã
-VGA : OpenGL‘Î‰žƒrƒfƒIƒJ[ƒh
-Compiler : Visual Studio 2010 (Express Edition‰Â)
+ãƒ»Easy Physics SDK APIã®ä½¿ç”¨
+ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã«Easy Physics SDKã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿½åŠ ã—ã€ã‚³ãƒ¼ãƒ‰ã«
+ã€ŒEasyPhysicsSdk/easy_physics/EpxInclude.hã€ã‚’ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã—ã¦ãã ã•ã„ã€‚ä»–ã®é–¢é€£
+ãƒ˜ãƒƒãƒ€ã¯EpxInclude.hã‹ã‚‰ç›¸å¯¾çš„ã«å‚ç…§ã•ã‚Œã¾ã™ã€‚
+
+===============================================================================
+== ãƒ“ãƒ«ãƒ‰ç’°å¢ƒ
+
+OS : Windows XPä»¥é™
+CPU : 1GHzä»¥ä¸Š
+VGA : OpenGLå¯¾å¿œãƒ“ãƒ‡ã‚ªã‚«ãƒ¼ãƒ‰
+Compiler : Visual Studio 2010 (Express Editionå¯)
 
 ===============================================================================
 https://github.com/hmatsuike/EasyPhysicsSdk
